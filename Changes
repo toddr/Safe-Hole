@@ -8,3 +8,12 @@ Revision history for Perl extension Safe::Hole.
 
 0.03  Mon Nov 15 1999
 	- change global stash.
+
+0.04  Thu Jun 8 2000
+    - add 'require 5.005;'
+    - 1 bug fixed in new()
+
+0.05  Mon Jul 10 2000
+    - 1 security bug (wrapped object contains hole object as public hash value) 
+      fixed
+    - AUTOLOAD of wrapped package is defined only once

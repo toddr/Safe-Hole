@@ -15,7 +15,7 @@ require AutoLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -63,20 +63,18 @@ sub wrap {
 		}
 	} elsif( defined %{$type.'::'} ) {
 		my $wrapclass = ref($self).'::'.$type;
-		eval "package $wrapclass;".<<'END';
-			sub AUTOLOAD {
-				$_[0]->{HOLE}->call(
-					sub{
+		*{$wrapclass.'::AUTOLOAD'} = 
+			sub {
+				$self->call(
+					sub {
 						no strict;
 						my $self = shift;
 						my $name = $AUTOLOAD;
 						$name =~ s/.*://;
 						$self->{OBJ}->$name(@_);
 					}, @_);
-			}
-END
-		croak $@ if $@;
-		$result = bless { HOLE => $self, OBJ => $ref }, $wrapclass;
+			} unless defined &{$wrapclass.'::AUTOLOAD'};
+		$result = bless { OBJ => $ref }, $wrapclass;
 		if( $typechar eq '$' ) {
 			${$cpt->varglob($word)} = $result;
 		} elsif( $typechar ) {
