@@ -1,3 +1,6 @@
+# Safe::Hole - make a hole to the original main compartment in the Safe compartment
+# Copyright 1999-2001, Sey Nakajima, All rights reserved.
+# This program is free software under the GPL.
 package Safe::Hole;
 
 require 5.005;
@@ -15,7 +18,7 @@ require AutoLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 bootstrap Safe::Hole $VERSION;
 
