@@ -1,5 +1,6 @@
 package Safe::Hole;
 
+require 5.005;
 use Carp;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
@@ -14,7 +15,7 @@ require AutoLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -24,7 +25,7 @@ sub new {
 	my $self = {};
 	$self->{PACKAGE} = $package || 'main';
 	no strict 'refs';
-	$self->{STASH} = \%{$package . '::'};
+	$self->{STASH} = \%{$self->{PACKAGE} . '::'};
 	bless $self, $class;
 }
 
