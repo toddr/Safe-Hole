@@ -17,3 +17,6 @@ Revision history for Perl extension Safe::Hole.
     - 1 security bug (wrapped object contains hole object as public hash value) 
       fixed
     - AUTOLOAD of wrapped package is defined only once
+
+0.06  Mon Jul 10 2000
+    - wrapped package name includes hole'd package name

@@ -15,7 +15,7 @@ require AutoLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -62,7 +62,7 @@ sub wrap {
 			croak "'$name' type mismatch with $type";
 		}
 	} elsif( defined %{$type.'::'} ) {
-		my $wrapclass = ref($self).'::'.$type;
+		my $wrapclass = ref($self).'::'.$self->root().'::'.$type;
 		*{$wrapclass.'::AUTOLOAD'} = 
 			sub {
 				$self->call(
