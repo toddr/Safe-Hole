@@ -10,7 +10,6 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 
 require Exporter;
 require DynaLoader;
-require AutoLoader;
 
 @ISA = qw(Exporter DynaLoader);
 # Items to export into callers namespace by default. Note: do not export
@@ -18,23 +17,62 @@ require AutoLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 bootstrap Safe::Hole $VERSION;
 
-# Preloaded methods go here.
 sub new {
-	my($class, $package) = @_;
-	my $self = {};
-	$self->{PACKAGE} = $package || 'main';
-	no strict 'refs';
-	$self->{STASH} = \%{$self->{PACKAGE} . '::'};
-	bless $self, $class;
+	my($class, $args) = @_;
+	my $self = bless {}, $class;
+	$args = { ROOT => $args || 'main' } unless ref $args eq 'HASH';
+	if ( $args->{ROOT} ) {
+	    $self->{PACKAGE} = $args->{ROOT};
+	    no strict 'refs';
+	    $self->{STASH} = \%{"$args->{ROOT}::"};
+        } else {
+	    $self->{INC} = [ \%INC, \@INC ];
+	    $self->{OPMASK} =  _get_current_opmask();
+	    $self->{PACKAGE} = 'main';
+	    $self->{STASH} = \%main::;
+	}
+	$self;
 }
 
 sub call {
-	my($self, $coderef, @args) = @_;
-	return _hole_call_sv($self->{STASH}, $coderef, \@args);
+	my $self = shift;
+	my $coderef = shift;
+	my @args = @_;
+	
+	# _hole_call_sv() does not seem to like being ripped off the stack
+	# so we need some fancy footwork to catch and re-throw the error
+
+	my (@r,$did_not_die);
+	my $wantarray = wantarray;
+
+	local *INC;
+	*INC = $_ for @{$self->{INC}||[]};
+
+        # Safe::Hole::User contains nothing but is a placeholder so that
+	# things that are called via Safe::Hole can Carp::croak properly.
+
+	package Safe::Hole::User;
+
+	my $inner_call = sub {
+	    eval {
+		@_ = @args;
+		if ( $wantarray ) {
+		    @r = &$coderef;
+		} else {
+		    @r = scalar &$coderef;
+		}
+		$did_not_die=1;
+	    };
+	};
+
+	Safe::Hole::_hole_call_sv($self->{STASH}, $ {$self->{OPMASK}||\undef}, $inner_call);
+
+	die $@ unless $did_not_die;
+	return wantarray ? @r : $r[0];
 }
 
 sub root {
@@ -104,7 +142,7 @@ Safe::Hole - make a hole to the original main compartment in the Safe compartmen
   use Safe;
   use Safe::Hole;
   $cpt = new Safe;
-  $hole = new Safe::Hole;
+  $hole = new Safe::Hole {};
   sub test { Test->test; }
   $Testobj = new Test;
   # $cpt->share('&test');  # alternate as next line
@@ -121,13 +159,20 @@ Safe::Hole - make a hole to the original main compartment in the Safe compartmen
 =head1 DESCRIPTION
 
   We can call outside defined subroutines from the Safe compartment
-using share(), or can call methods through the object that is copied into 
-the Safe compartment using varglob(). But that subroutines or methods 
-are executed in the Safe compartment too, so they cannot call another 
-subroutines that are dinamically qualified with the package name such as 
-class methods.
+using share(), or can call methods through the object that is copied
+into the Safe compartment using varglob(). But that subroutines or
+methods are executed in the Safe compartment too, so they cannot call
+another subroutines that are dinamically qualified with the package
+name such as class methods nor can they compile code that uses opcodes
+that are forbidden within the compartment.
+
   Through Safe::Hole, we can execute outside defined subroutines in the 
 original main compartment from the Safe compartment. 
+
+  Note that if a subroutine called through Safe::Hole::call does a
+Carp::croak() it will report the error as having occured within
+Safe::Hole.  This can be avoided by including Safe::Hole::User in the
+@ISA for the package containing the subroutine.
 
 =head2 Methods
 
@@ -135,17 +180,32 @@ original main compartment from the Safe compartment.
 
 =item new [NAMESPACE]
 
+Class method. Backward compatible constructor.
+  NAMESPACE is the alternate root namespace that makes the compartment
+in which call() method execute the subroutine.  Default of NAMESPACE
+means the current 'main'. This emulates the behaviour of
+Safe-Hole-0.08 and earlier.
+
+=item new \%arguments
+
 Class method. Constructor. 
-  NAMESPACE is the alternate root namespace that 
-makes the compartment in which call() method execute the subroutine. 
-Default of NAMESPACE means 'main'. We use the default usually.
+  The constructor is called with a hash reference providing the
+constructor arguments.  The argument ROOT specifies the alternate root
+namespace for the object.  If the ROOT argument is not specified then
+Safe::Hole object will attempt restore as much as it can of the
+environment in which it was constrtucted.  This includes the opcode
+mask, C<%INC> and C<@INC>.  If a root namespace is specified then it
+would not make sense to restore the %INC and @INC from main:: so this
+is not done.  Also if a root namespace is given the opcode mask is not
+restored either.
 
 =item call $coderef [,@args]
 
 Object method. 
-  Call the subroutine refered by $coderef in the compartment 
-that is specified with constructor new. @args are passed to called
-$coderef.
+  Call the subroutine refered by $coderef in the compartment that is
+specified with constructor new. @args are passed as the arguments to
+the called $coderef.  Note that the arguments are not currently passed
+by reference although this may change in a future version.
 
 =item wrap $ref [,$cpt ,$name]
 
@@ -168,20 +228,30 @@ $name must like '&subroutine'. When $ref is a object $name must like '$var'.
 
 =item root
 
-Object method. 
-  Return the namespace that is specified with constructor new.
+Object method.
+  Return the namespace that is specified with constructor new().
+If no namespace was then root() returns 'main'.
 
 =head2 Warning
 
 You MUST NOT share the Safe::Hole object with the Safe compartment. If you do it
 the Safe compartment is NOT safe.
 
-=head1 AUTHOR
+This module provides a means to go from a state where an opcode is
+denied back to a state where it is not.  Reasonable care has been
+taken to ensure that programs cannot simply manipulate the internals
+to the Safe::Hole object to reduce the opmask in effect.  However there
+may still be a way that the authors have not considered.  In
+particular it relies on the fact that a Perl program cannot change
+stuff inside the magic on a Perl variable.  If you install a module
+that allows a Perl program to fiddle inside the magic then this
+assuption breaks down.  One would hope that any system that was
+running un-trusted code would not have such a module installed.
 
-Sey Nakajima <sey@jkc.co.jp>
+=head1 AUTHORS
+
+Sey Nakajima E<lt>nakajima@netstock.co.jpE<gt>, Brian McCauley E<lt>nobull@cpan.orgE<gt>
 
 =head1 SEE ALSO
 
 Safe(3).
-
-=cut
