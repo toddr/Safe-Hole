@@ -15,7 +15,7 @@ require AutoLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -69,6 +69,7 @@ sub wrap {
 					sub {
 						no strict;
 						my $self = shift;
+						return if $AUTOLOAD =~ /::DESTROY$/;
 						my $name = $AUTOLOAD;
 						$name =~ s/.*://;
 						$self->{OBJ}->$name(@_);
