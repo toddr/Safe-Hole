@@ -27,10 +27,13 @@ Revision history for Perl extension Safe::Hole.
 0.08  Wed Jan 17 2001
     - lincense under the GPL
 
-0.09  Thu Jan 15 2004
+0.09  Thu Jan 15 2004 
     - catch and re-thow exceptions (not doing so seems to cause segfault sometimes)
     - restore opmask, %INC and @INC (default backward-compatabile mode inhibits this)
     - test.pl now has some real tests
     - Safe::Hole::User namespace so that Carp can do the right thing
     - this version by Brian McCauley <nobull@cpan.org>
 
+0.10  Fri Jan 16 2004
+    - don't local(*INC} unless $self->{INC}
+    - this version by Brian McCauley <nobull@cpan.org>

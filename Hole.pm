@@ -17,7 +17,7 @@ require DynaLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.09';
+$VERSION = '0.10';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -49,8 +49,9 @@ sub call {
 	my (@r,$did_not_die);
 	my $wantarray = wantarray;
 
-	local *INC;
-	*INC = $_ for @{$self->{INC}||[]};
+	local(*INC), do {
+	    *INC = $_ for @{$self->{INC}};
+        } if $self->{INC};
 
         # Safe::Hole::User contains nothing but is a placeholder so that
 	# things that are called via Safe::Hole can Carp::croak properly.

@@ -2,7 +2,7 @@
 use strict;
 my $loaded;
 
-BEGIN { $| = 1; print "1..25\n"; }
+BEGIN { $| = 1; print "1..26\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Safe::Hole;
 use Safe;
@@ -118,6 +118,13 @@ print "ok 24\n";
 $hole->wrap(sub { require File::Find; 1 },$safe,'&do_require');
 print "not " if $INC{'File/Find.pm'} || !$safe->reval('do_require') || !$INC{'File/Find.pm'};
 print "ok 25\n";
+
+##################################
+# Test that *INC not localised when it shouldn't be
+##################################
+$old_hole->wrap(sub { no strict; my $inc='INC'; "@{[%$inc]}" },$safe,'&get_inc');
+print "not " unless $safe->reval('%INC = ( FOO => "./FOO.pm" ); &get_inc') eq 'FOO ./FOO.pm';
+print "ok 26\n";
 
 ###################################
 # Test wrapping of objects
