@@ -1,0 +1,10 @@
+Revision history for Perl extension Safe::Hole.
+
+0.01  Thu Oct 21 15:45:24 1999
+	- original version; created by h2xs 1.18
+
+0.02  Mon Nov 1 1999
+	- wrap() method added.
+
+0.03  Mon Nov 15 1999
+	- change global stash.

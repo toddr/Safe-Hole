@@ -1,0 +1,14 @@
+Safe::Hole - make a hole to the original main compartment in the Safe compartment
+
+This module is a free software in common sense. 
+
+To install:
+  perl Makefile.PL
+  make
+  make test
+  su
+  make install
+
+Please fun!
+
+Sey Nakajima <sey@jkc.co.jp>
