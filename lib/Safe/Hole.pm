@@ -251,7 +251,9 @@ running un-trusted code would not have such a module installed.
 
 =head1 AUTHORS
 
-Sey Nakajima E<lt>nakajima@netstock.co.jpE<gt>, Brian McCauley E<lt>nobull@cpan.orgE<gt>
+Sey Nakajima <nakajima@netstock.co.jp> (Initial version)
+
+Brian McCauley <nobull@cpan.org> (Maintenance)
 
 =head1 SEE ALSO
 
