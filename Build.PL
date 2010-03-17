@@ -13,7 +13,7 @@ my $builder = Module::Build->new(
 	'Test::More'    => '0.40', 
 	'Module::Build' => '0.35',
     },
-    add_to_cleanup      => ['Safe-Hole-*' ],
+    add_to_cleanup      => [qw(Safe-Hole-* lib/Safe/*.c lib/Safe/*.o)],
     create_makefile_pl  => 'traditional',
     meta_merge     => {
 	resources => {
