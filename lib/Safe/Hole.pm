@@ -225,13 +225,13 @@ $name must like '&subroutine'. When $ref is a object $name must like '$var'.
   $hole->wrap(sub{...}, $cpt, '&foo');
   $hole->wrap($objfoo, $cpt, '$objbar');
 
-=back
-
 =item root
 
 Object method.
-  Return the namespace that is specified with constructor new().
+Return the namespace that is specified with constructor new().
 If no namespace was then root() returns 'main'.
+
+=back
 
 =head2 Warning
 
