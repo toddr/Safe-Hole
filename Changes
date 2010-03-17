@@ -37,3 +37,10 @@ Revision history for Perl extension Safe::Hole.
 0.10  Fri Jan 16 2004
     - don't local(*INC} unless $self->{INC}
     - this version by Brian McCauley <nobull@cpan.org>
+
+0.11 Tue Mar 16 2010
+    - re-structure module to more modern layout. Convert to M::B
+    - re-factor tests to test::more
+    - pod fixes now we're testing them
+    - clean up authors and generate proper META.yml
+    - Fix 5.10 deprecation of defined %hash. Just use %hash to the same effect.

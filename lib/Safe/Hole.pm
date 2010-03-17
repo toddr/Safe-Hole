@@ -17,7 +17,7 @@ require DynaLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.10';
+$VERSION = '0.11';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -103,7 +103,7 @@ sub wrap {
 		} elsif( $typechar ) {
 			croak "'$name' type mismatch with $type";
 		}
-	} elsif( defined %{$type.'::'} ) {
+	} elsif( %{$type.'::'} ) {
 		my $wrapclass = ref($self).'::'.$self->root().'::'.$type;
 		*{$wrapclass.'::AUTOLOAD'} = 
 			sub {
