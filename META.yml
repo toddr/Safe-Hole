@@ -1,0 +1,30 @@
+---
+name: Safe-Hole
+version: 0.10
+author:
+  - Sey Nakajima <nakajima@netstock.co.jp> (Initial version)
+  - Brian McCauley <nobull@cpan.org> (Maintenance)
+  - Todd Rinaldo <toddr@cpan.org> (Maintenance)
+abstract: lib/Safe/Hole.pm
+license: perl
+resources:
+  MailingList: mailto:toddr@cpan.org
+  bugtracker: https://rt.cpan.org/NoAuth/Bugs.html?Dist=Safe-Hole
+  homepage: http://github.com/toddr/Safe-Hole
+  license: http://dev.perl.org/licenses/
+  repository: git://github.com/toddr/Safe-Hole.git
+build_requires:
+  Module::Build: 0.35
+  Test::More: 0.40
+configure_requires:
+  Module::Build: 0.35
+provides:
+  Safe::Hole:
+    file: lib/Safe/Hole.pm
+    version: 0.10
+  Safe::Hole::User:
+    file: lib/Safe/Hole.pm
+generated_by: Module::Build version 0.35
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4

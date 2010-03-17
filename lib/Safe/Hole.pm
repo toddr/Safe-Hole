@@ -255,6 +255,8 @@ Sey Nakajima <nakajima@netstock.co.jp> (Initial version)
 
 Brian McCauley <nobull@cpan.org> (Maintenance)
 
+Todd Rinaldo <toddr@cpan.org> (Maintenance)
+
 =head1 SEE ALSO
 
 Safe(3).
