@@ -103,7 +103,7 @@ is($old_hole->call( sub { eval '$v' }), 'v in main', "backwards compatible - old
 # Alternate root
 my $old_hole2 = new Safe::Hole 'foo';
 isa_ok($old_hole, 'Safe::Hole', 'New hole alternate root');
-$foo::v = 1;
+$foo::v = 1; # added to prevent warning: 'Name "foo::v" used only once: possible typo at t/01-hole.t line 107.'
 $foo::v = 'v in foo';
 is($old_hole2->call( sub { eval '$v' }), 'v in foo', 'v in foo - alternate root');
 
