@@ -4,7 +4,6 @@ use Module::Build;
 
 my $builder = Module::Build->new(
     module_name         => 'Safe::Hole',
-    author              => 'Sey Nakajima <nakajima@netstock.co.jp>',
     dist_version_from   => 'lib/Safe/Hole.pm',
     abstract_from       => 'lib/Safe/Hole.pm',
     dist_abstract       => 'lib/Safe/Hole.pm',
