@@ -13,7 +13,6 @@ my $builder = Module::Build->new(
 	'Module::Build' => '0.35',
     },
     add_to_cleanup      => [qw(Safe-Hole-* lib/Safe/*.c lib/Safe/*.o)],
-    create_makefile_pl  => 'traditional',
     meta_merge     => {
 	resources => {
         homepage => 'http://github.com/toddr/Safe-Hole',
