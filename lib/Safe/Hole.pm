@@ -17,7 +17,7 @@ require DynaLoader;
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
 );
-$VERSION = '0.11';
+$VERSION = '0.12';
 
 bootstrap Safe::Hole $VERSION;
 
@@ -56,7 +56,8 @@ sub call {
         # Safe::Hole::User contains nothing but is a placeholder so that
 	# things that are called via Safe::Hole can Carp::croak properly.
 
-	package Safe::Hole::User;
+	package
+	  Safe::Hole::User; # Package name on a different line to keep it from being indexed
 
 	my $inner_call = sub {
 	    eval {
