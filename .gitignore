@@ -1,0 +1,7 @@
+/Build
+/MYMETA.json
+/MYMETA.yml
+/_build/*
+/blib/*
+/lib/Safe/Hole.c
+/lib/Safe/Hole.o
