@@ -16,11 +16,10 @@ my $builder = Module::Build->new(
     meta_merge     => {
 	resources => {
         homepage => 'http://github.com/toddr/Safe-Hole',
-        bugtracker => 'https://rt.cpan.org/NoAuth/Bugs.html?Dist=Safe-Hole',
-        MailingList => 'mailto:toddr@cpan.org',
+        bugtracker => 'https://github.com/toddr/Safe-Hole/issues',
         repository  => 'git://github.com/toddr/Safe-Hole.git',
 	}
-    }
-    );
+} 
+);
 
 $builder->create_build_script;
